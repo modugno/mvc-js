@@ -1,8 +1,12 @@
 class Bind {
 
-	constructor(model, view, props) {
+	constructor(model, view, ...props) {
+		let proxy = ProxyFactory.create(model, props, function(model) {
+			view.update(model);
+		});
 
-		let proxy = ProxyFactory.create(model, props, view);
-		// video parou em 06:56
+		view.update(model);
+
+		return proxy;
 	}
 }
