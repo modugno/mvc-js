@@ -19,7 +19,6 @@ class ProxyFactory {
 			},
 
 			set(target, prop, value, receiver) {
-
 				if (props.includes(prop)) {
 					action(target);
 				}

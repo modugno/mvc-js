@@ -13,17 +13,15 @@ class NegociacaoController {
 		this._inputValor = $('#valor');
 		
 		// fabrica lista de negociacoes
-		this._negociacoesView  = new NegociacoesView($('#negociacoesView'));		
 		this._listaNegociacoes = new Bind(
 			new ListaNegociacoes(),
-			this._negociacoesView,
+			new NegociacoesView($('#negociacoesView')),
 			'adiciona', 'esvaziar'); 
 
 		// fabrica as mensagem
-		this._mensagemView = new MensagemView($('#mensagemView'));
 		this._mensagem = new Bind(
 			new Mensagem(),
-			this._mensagemView,
+			new MensagemView($('#mensagemView')),
 			'texto');
 		
 	}
@@ -58,5 +56,22 @@ class NegociacaoController {
 		this._inputQtde.value  = 0;
 
 		this._inputData.focus();
+	}
+
+	importarNegociacao() {
+
+		let service = new NegociacoesService();
+		service.getNegociacoesDaSemana((erro, negociacoes) => {
+
+			// se tiver erro, ja printa na tela
+			if (erro) {
+				console.log(erro);
+				return;
+			}
+
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+			console.log('Negociação adicionada com sucesso.');
+
+		});
 	}
 }
