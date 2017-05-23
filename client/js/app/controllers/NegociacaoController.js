@@ -61,17 +61,30 @@ class NegociacaoController {
 	importarNegociacao() {
 
 		let service = new NegociacoesService();
-		service.getNegociacoesDaSemana((erro, negociacoes) => {
 
-			// se tiver erro, ja printa na tela
-			if (erro) {
-				console.log(erro);
-				return;
-			}
-
+		// Negociações da Semana
+		service.getNegociacoesDaSemana()
+		.then(negociacoes => {
 			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
-			console.log('Negociação adicionada com sucesso.');
+			this._mensagem.texto = 'Negociações importadas com sucesso.';
+		})
+		.catch(erro => this._mensagem.texto = erro);
 
-		});
+		// Negociações da Semana Retrasada
+		service.getNegociacoesDaSemanaRetrasada()
+		.then(negociacoes => {
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+			this._mensagem.texto = 'Negociações importadas com sucesso.';
+		})
+		.catch(erro => this._mensagem.texto = erro);
+
+		// Negociações da Semana Anterior
+		service.getNegociacoesDaSemanaAnterior()
+		.then(negociacoes => {
+			negociacoes.forEach(negociacao => this._listaNegociacoes.adiciona(negociacao));
+			this._mensagem.texto = 'Negociações importadas com sucesso.';
+		})
+		.catch(erro => this._mensagem.texto = erro);
+
 	}
 }
