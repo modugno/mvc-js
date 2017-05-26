@@ -1,5 +1,28 @@
 class NegociacoesService {
 
+	constructor() {
+		this._http = new HttpService;
+	}
+
+	/**
+	 * Retorna todas as negociacoes
+	 * @return {[type]} [description]
+	 */
+	getNegociacoes() {
+
+		return Promise.all([
+			this.getNegociacoesDaSemana(),
+			this.getNegociacoesDaSemanaAnterior(),
+			this.getNegociacoesDaSemanaRetrasada()
+		]).then(periodo => {
+
+			let negociacoes = periodo.reduce((dados, periodo) => dados.concat(periodo), []);
+			return negociacoes;
+		}).catch(erro => {
+			throw new Error(erro);
+		});
+	}
+
 	/**
 	 * Negociacoes da Semana
 	 * @param  {Function} callback [description]
@@ -7,42 +30,12 @@ class NegociacoesService {
 	 */
 	getNegociacoesDaSemana() {
 
-		return new Promise((resolve, reject) => {
-
-			// instancia o objeto para requisição HTTP
-			let xhr = new XMLHttpRequest();
-
-			// requisição GET na lista de negociacoes da semana
-			xhr.open('GET', 'negociacoes/semana');
-
-			// quando o estato do XMLHttpRequest mudar
-			xhr.onreadystatechange = () => {
-				/**
-				 * STATUS DA REQUISIÇÃO
-				 * 0: Requisição ainda não iniciada
-				 * 1: conexão com o servidor estabelecida
-				 * 2: requisição recebida
-				 * 3: processando requisição
-				 * 4: requisição concluida, e resposa pronta
-				 */
-
-				 // se a resposta do servidor
-				 if (xhr.readyState == 4) {
-
-				 	if (xhr.status == 200) {
-				 		resolve(JSON.parse(xhr.responseText)
-				 		.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)));
-
-				 	} else {
-				 		console.log(xhr.responseText);
-				 		reject('Não foi possível importar as negociações.');
-				 	}
-				 }
-			};
-
-			// envia a requisição
-			xhr.send();
-
+		return this._http.get('negociacoes/semana')
+		.then(negociacoes => {
+			return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+		}).catch(erro => {
+			console.log(erro);
+			throw new Error('Não foi possível obter as negociações da semana.');
 		});
 	}
 
@@ -53,42 +46,12 @@ class NegociacoesService {
 	 */
 	getNegociacoesDaSemanaRetrasada() {
 
-		return new Promise((resolve, reject) => {
-
-			// instancia o objeto para requisição HTTP
-			let xhr = new XMLHttpRequest();
-
-			// requisição GET na lista de negociacoes da semana
-			xhr.open('GET', 'negociacoes/retrasada');
-
-			// quando o estato do XMLHttpRequest mudar
-			xhr.onreadystatechange = () => {
-				/**
-				 * STATUS DA REQUISIÇÃO
-				 * 0: Requisição ainda não iniciada
-				 * 1: conexão com o servidor estabelecida
-				 * 2: requisição recebida
-				 * 3: processando requisição
-				 * 4: requisição concluida, e resposa pronta
-				 */
-
-				 // se a resposta do servidor
-				 if (xhr.readyState == 4) {
-
-				 	if (xhr.status == 200) {
-				 		
-				 		resolve(JSON.parse(xhr.responseText)
-				 		.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)));
-
-				 	} else {
-				 		console.log(xhr.responseText);
-				 		reject('Não foi possível importar as negociações.');
-				 	}
-				 }
-			};
-
-			// envia a requisição
-			xhr.send();
+		return this._http.get('negociacoes/retrasada')
+		.then(negociacoes => {
+			return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+		}).catch(erro => {
+			console.log(erro);
+			throw new Error('Não foi possível obter as negociações da semana.');
 		});
 	}
 
@@ -99,42 +62,12 @@ class NegociacoesService {
 	 */
 	getNegociacoesDaSemanaAnterior() {
 
-		return new Promise((resolve, reject) => {
-
-			// instancia o objeto para requisição HTTP
-			let xhr = new XMLHttpRequest();
-
-			// requisição GET na lista de negociacoes da semana
-			xhr.open('GET', 'negociacoes/anterior');
-
-			// quando o estato do XMLHttpRequest mudar
-			xhr.onreadystatechange = () => {
-				/**
-				 * STATUS DA REQUISIÇÃO
-				 * 0: Requisição ainda não iniciada
-				 * 1: conexão com o servidor estabelecida
-				 * 2: requisição recebida
-				 * 3: processando requisição
-				 * 4: requisição concluida, e resposa pronta
-				 */
-
-				 // se a resposta do servidor
-				 if (xhr.readyState == 4) {
-
-				 	if (xhr.status == 200) {
-				 		
-				 		resolve(JSON.parse(xhr.responseText)
-				 		.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor)));
-
-				 	} else {
-				 		console.log(xhr.responseText);
-				 		reject('Não foi possível importar as negociações.');
-				 	}
-				 }
-			};
-
-			// envia a requisição
-			xhr.send();
+		return this._http.get('negociacoes/anterior')
+		.then(negociacoes => {
+			return negociacoes.map(objeto => new Negociacao(new Date(objeto.data), objeto.quantidade, objeto.valor));
+		}).catch(erro => {
+			console.log(erro);
+			throw new Error('Não foi possível obter as negociações da semana.');
 		});
 	}
 }
