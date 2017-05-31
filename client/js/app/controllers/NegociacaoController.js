@@ -7,6 +7,9 @@ class NegociacaoController {
 		// instancia o objeto
 		let self = this;
 
+		// ordem da tabela
+		this._ordemAtual = '';
+
 		// pega os ados do formulário
 		this._inputData  = $('#data');
 		this._inputQtde  = $('#quantidade');
@@ -16,7 +19,7 @@ class NegociacaoController {
 		this._listaNegociacoes = new Bind(
 			new ListaNegociacoes(),
 			new NegociacoesView($('#negociacoesView')),
-			'adiciona', 'esvaziar'); 
+			'adiciona', 'esvaziar', 'ordena', 'inverteOrdem'); 
 
 		// fabrica as mensagem
 		this._mensagem = new Bind(
@@ -31,9 +34,13 @@ class NegociacaoController {
 		event.preventDefault();
 		
 		// adiciona na lista de negociacoes
-		this._listaNegociacoes.adiciona(this._criaNegociacao());
-		this._mensagem.texto = 'Negociação adicionada com sucesso.';
-		this._limpaFormulario();
+		try {
+			this._listaNegociacoes.adiciona(this._criaNegociacao());
+			this._mensagem.texto = 'Negociação adicionada com sucesso.';
+			this._limpaFormulario();
+		} catch(erro) {
+			this._mensagem.texto = erro;
+		}
 	}
 
 	apaga() {
@@ -69,5 +76,15 @@ class NegociacaoController {
 			this._mensagem.texto = 'Negociações importadas com sucesso.';
 
 		}).catch(error => this._mensagem.texto = error);
+	}
+
+	ordena(coluna) {
+		if (this._ordemAtual == coluna) {
+			this._listaNegociacoes.inverteOrdem();
+		} else {
+			this._listaNegociacoes.ordena((a, b) => a[coluna] - b[coluna]);	
+		}
+		
+		this._ordemAtual = coluna;
 	}
 }

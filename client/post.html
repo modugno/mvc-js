@@ -26,47 +26,41 @@
 
 		<button class="btn btn-primary" type="submit" onclick="sendPost(event)">Enviar dados para servidor</button>
 	</form>
+    
+    <script src="js/app/services/HttpService.js"></script>
 
     <script>
         function sendPost(event) {
 
             event.preventDefault();
+            
+            console.log('Enviando Post...');
 
-            console.log("Enviando post");
+            // dados do formulario
+            let inputData = document.querySelector('#data');
+            let inputQuantidade = document.querySelector('#quantidade');
+            let inputValor = document.querySelector('#valor');
 
-            let $ = document.querySelector.bind(document);
-            inputData = $('#data');
-            inputQuantidade = $('#quantidade');
-            inputValor = $('#valor');
-
-            let negociacao = {
+            // cria o objeto de negociacoes
+            let negociacoes = {
                 data: inputData.value,
                 quantidade: inputQuantidade.value,
                 valor: inputValor.value
             };
 
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/negociacoes", true);
-            xhr.setRequestHeader("Content-type", "application/json");
-            
-            xhr.onreadystatechange = () => {
-                
-                if (xhr.readyState == 4) {
+            let http = new HttpService;
 
-                    if (xhr.status == 200) {
-                        inputData.value = '';
-                        inputQuantidade.value = 1;
-                        inputValor.value = 0.0;
-                        inputData.focus();
-                        alert('Negociação enviada com sucesso');
-                    } else {
-                        alert(`Não foi possível enviar a negociação: ${xhr.responseText}`);
-                    }
-                }
-            }
-            xhr.send(JSON.stringify(negociacao));
+            http.post('/negociacoes', negociacoes)
+            .then(() => {
                 
-    }
+                data.value = '';
+                quantidade.value = '';
+                valor.value = '';
+                data.focus();
+                alert('Negociação adicionada com sucesso.');
+
+            }).catch(error => alert('Não foi possível enviar o formulário.'));
+        }
     </script>
 </body>
 </html>
